@@ -1,0 +1,37 @@
+# GUARD — generate/cluster config
+# Model : muse-bench/MUSE-news_target (Llama-2-7B, 32 layers, fine-tuned on BBC News)
+# Layer : 8  (1/4 × 32)
+# Run   : guard cluster configs/examples/muse_news.yaml
+#
+# Data  : place MUSE news forget/retain splits at data/muse_news_forget.jsonl
+#         and data/muse_news_retain.jsonl  (one JSON object per line, field "text")
+
+model_name: muse-bench/MUSE-news_target
+layers: [8]
+method: orthogonal
+module_name: residual
+token_position: mean
+
+normalizations:
+  sv_scaling: activation_norm
+  rotation_only: true
+  projection_eps: 1.0e-6
+
+dataset:
+  type: local_jsonl
+  forget_jsonl: data/muse_news_forget.jsonl
+  retain_jsonl: data/muse_news_retain.jsonl
+  text_key: text
+
+clustering:
+  n_clusters: auto
+  k_min: 2
+  k_max: 10
+  embed_model: all-MiniLM-L6-v2
+
+apply_chat_template: false
+behavior: bbc-news
+batch_size: 64
+max_length: 512
+output_dir: steering_vectors/
+seed: 0

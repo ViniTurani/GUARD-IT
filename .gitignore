@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data / artefacts (never commit large tensors)
+steering_vectors*/
+experiments*/
+
+logs/
+*.pt
+*.bin
+*.safetensors
+
+# Scripts (local analysis / dashboards — not part of the public API)
+scripts/
+
+# Paper/writing artefacts
+benchmarks/overleaf/
+*.tex
+*.csv
+
+# Ablation / sweep run scripts
+run_ablations.sh
+run_all.sh
+run_method_ablations.sh
+
+# Experiment sweep configs (local only — use configs/examples/ for shareable examples)
+benchmarks/configs/groups/
+benchmarks/configs/groups_3b/
+benchmarks/configs/groups_8b/
+configs/groups/
+
+# Datasets (JSONL corpora — download separately)
+data/
+
+# Streamlit dashboard
+.streamlit/
+
+# Configs with secrets / local paths
+*.local.yaml
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Cloned benchmark repos (use git submodule or clone manually)
+benchmarks/open-unlearning/
+benchmarks/muse_bench/
+
+# OS
+.DS_Store
+Thumbs.db

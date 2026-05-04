@@ -1,0 +1,18 @@
+# MUSE news — GUARD clustered gateway eval
+model: muse-bench/MUSE-news_target
+layer: 8
+module_name: residual
+corpus: news
+norm_activation_coeff: true
+token_position: mean
+
+routing_source: text
+routing_threshold: 0.55
+routing_mode: weighted_threshold
+
+effective_coeffs: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+privleak_batch_size: 16
+gen_batch_size: 16
+output_path: experiments_muse/results/news_mean.json
+seed: 0

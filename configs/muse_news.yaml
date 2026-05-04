@@ -1,0 +1,37 @@
+# GUARD — SV generation config for MUSE news corpus
+# Model: muse-bench/MUSE-news_target (Llama-2-7B fine-tuned on BBC news)
+# Best layer from TOFU 7B ablations: 14
+# Run: guard cluster configs/muse_news.yaml
+
+model_name: muse-bench/MUSE-news_target
+layers: [14]
+method: orthogonal
+module_name: residual
+token_position: -1
+
+normalizations:
+  sv_scaling: activation_norm
+  norm_activation_coeff: true
+  projection_eps: 1.0e-6
+
+dataset:
+  type: local_jsonl
+  forget_jsonl: data/muse_news_forget.jsonl
+  retain_jsonl: data/muse_news_retain.jsonl
+  text_key: text
+
+clustering:
+  n_clusters: auto
+  k_min: 2
+  k_max: 10
+  embed_model: all-MiniLM-L6-v2
+
+apply_chat_template: false
+
+behavior: bbc-news
+batch_size: 256
+max_length: 512
+output_dir: steering_vectors_muse/
+
+seed: 0
+cuda: "3"

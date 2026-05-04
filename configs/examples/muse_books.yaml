@@ -1,0 +1,37 @@
+# GUARD — generate/cluster config
+# Model : muse-bench/MUSE-books_target (Llama-2-7B, 32 layers, fine-tuned on Harry Potter)
+# Layer : 8  (1/4 × 32)
+# Run   : guard cluster configs/examples/muse_books.yaml
+#
+# Data  : place MUSE books forget/retain splits at data/muse_books_forget.jsonl
+#         and data/muse_books_retain.jsonl  (one JSON object per line, field "text")
+
+model_name: muse-bench/MUSE-books_target
+layers: [8]
+method: orthogonal
+module_name: residual
+token_position: mean
+
+normalizations:
+  sv_scaling: activation_norm
+  rotation_only: true
+  projection_eps: 1.0e-6
+
+dataset:
+  type: local_jsonl
+  forget_jsonl: data/muse_books_forget.jsonl
+  retain_jsonl: data/muse_books_retain.jsonl
+  text_key: text
+
+clustering:
+  n_clusters: auto
+  k_min: 2
+  k_max: 10
+  embed_model: all-MiniLM-L6-v2
+
+apply_chat_template: false
+behavior: harry-potter
+batch_size: 64
+max_length: 512
+output_dir: steering_vectors/
+seed: 0

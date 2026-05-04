@@ -1,0 +1,31 @@
+# GUARD — generate/cluster config
+# Model : Llama-3.1-8B-Instruct (32 layers) fine-tuned on TOFU
+# Split : forget01 (1 % of TOFU authors)
+# Layer : 8  (1/4 × 32)
+# Run   : guard cluster configs/examples/tofu_8b_forget01.yaml
+
+model_name: open-unlearning/tofu_Llama-3.1-8B-Instruct_full
+layers: [8]
+method: orthogonal
+module_name: residual
+token_position: mean
+
+normalizations:
+  sv_scaling: activation_norm
+  rotation_only: true
+  projection_eps: 1.0e-6
+
+dataset:
+  type: tofu
+  forget_split: forget01
+
+clustering:
+  n_clusters: auto
+  k_min: 2
+  k_max: 20
+  embed_model: all-MiniLM-L6-v2
+
+batch_size: 64
+max_length: 512
+output_dir: steering_vectors/
+seed: 0
