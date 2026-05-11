@@ -1,8 +1,8 @@
 # GUARD-IT
 
-**Inference-Time Unlearning via Gated Activation Redirection**
+**Inference-Time Machine Unlearning via Gated Activation Redirection**
 
-This repository is the official implementation of [GUARD-IT: Inference-Time Unlearning via Gated Activation Redirection](PAPER_LINK).
+This repository is the official implementation of GUARD-IT: Inference-Time Machine Unlearning via Gated Activation Redirection.
 
 ![GUARD pipeline](guard_it_pipeline.png)
 
@@ -28,7 +28,6 @@ Optional extras: `quant` (4-bit/8-bit quantization), `dev` (tests + linting).
 |--------|-------------|
 | `orthogonal` | Project forget mean perpendicular to retain mean direction |
 | `diff_means` | `forget_mean − retain_mean` |
-| `orth_diff_means` | `diff_means` then projected perpendicular to retain |
 
 **Normalizations** (both enabled by default):
 - `activation_norm` — scales SV to match corpus activation norms → model-agnostic coefficients
@@ -259,9 +258,17 @@ Bug reports and questions: please open an issue.
 If you use GUARD in your research, please cite:
 
 ```bibtex
-@article{guardit2026,
-  title={GUARD-IT: Inference-Time Unlearning via Gated Activation Redirection},
-  author={Anonymous},
+@misc{guardit2026,
+  title={GUARD-IT: Inference-Time Machine Unlearning via Gated Activation Redirection},
+  author=
+  {Vinícius Conte Turani, Otávio Parraga, João Vitor Boer Abitante, Kristen K. Arguello, Joana Pasquali, Ramiro N. Barros, Flavio du Pin Calmon, Christian Mattjie, Rodrigo C. Barros, Lucas S. Kupssinskü
+  },
   year={2026}
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={}, 
+  eprint={},
+
+
 }
 ```
