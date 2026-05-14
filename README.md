@@ -258,17 +258,13 @@ Bug reports and questions: please open an issue.
 If you use GUARD in your research, please cite:
 
 ```bibtex
-@misc{guardit2026,
-  title={GUARD-IT: Inference-Time Machine Unlearning via Gated Activation Redirection},
-  author=
-  {Vinícius Conte Turani, Otávio Parraga, João Vitor Boer Abitante, Kristen K. Arguello, Joana Pasquali, Ramiro N. Barros, Flavio du Pin Calmon, Christian Mattjie, Rodrigo C. Barros, Lucas S. Kupssinskü
-  },
-  year={2026}
-  archivePrefix={arXiv},
-  primaryClass={cs.LG},
-  url={}, 
-  eprint={},
-
-
+@misc{turani2026inferencetimemachineunlearninggated,
+      title={Inference-Time Machine Unlearning via Gated Activation Redirection}, 
+      author={Vinícius Conte Turani and Otávio Parraga and João Vitor Boer Abitante and Kristen K. Arguello and Joana Pasquali and Ramiro N. Barros and Flavio du Pin Calmon and Christian Mattjie and Rodrigo C. Barros and Lucas S. Kupssinskü},
+      year={2026},
+      eprint={2605.12765},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2605.12765}, 
 }
 ```
