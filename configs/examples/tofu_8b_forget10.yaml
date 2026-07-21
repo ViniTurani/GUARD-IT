@@ -9,6 +9,8 @@ layers: [8]
 method: orthogonal
 module_name: residual
 token_position: mean
+apply_chat_template: true     # TOFU model was fine-tuned WITH the chat template — extract SV activations in the eval context
+cluster_with_template: true   # routing centroids in templated space to match the eval-time templated prompt seen by the gate
 
 normalizations:
   sv_scaling: activation_norm
