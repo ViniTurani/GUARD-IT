@@ -114,6 +114,12 @@ def _template_args(cfg: dict[str, Any]) -> Any:
     # Defaults match open-unlearning/configs/model/Llama-3.2-1B-Instruct.yaml.
     defaults: dict[str, Any] = {
         "apply_chat_template": True,
+        # Llama-3.1+ templates call strftime_now(...) to render "Today Date:"
+        # when no date_string is given, embedding the wall-clock date at
+        # render time — makes eval prompts (and thus generations/metrics)
+        # silently vary depending on what day the benchmark runs. Pin it to
+        # match the SV-extraction side (guard.cli.cluster._PINNED_DATE_STRING).
+        "date_string": "26 Jul 2024",
         "system_prompt": "You are a helpful assistant.",
         "system_prompt_with_special_tokens": (
             "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n"

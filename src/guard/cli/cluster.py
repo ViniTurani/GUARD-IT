@@ -217,6 +217,15 @@ def _calibrate_threshold_retain_percentile(
 # ---------------------------------------------------------------------------
 
 
+# Llama-3.1+ chat templates call strftime_now("%d %b %Y") to render the
+# "Today Date:" system-header field when no `date_string` is passed to
+# apply_chat_template — embedding the wall-clock date of the machine at
+# render time.  That makes the SV-extraction / clustering corpus (and its
+# MiniLM embeddings) silently vary run-to-run depending on what day they
+# were computed, breaking reproducibility.  Pin it.
+_PINNED_DATE_STRING = "26 Jul 2024"
+
+
 def _apply_template(docs_qa: list[tuple[str, str]], tokenizer: Any) -> list[str]:
     """Wrap (question, answer) pairs with the model's chat template."""
     out: list[str] = []
@@ -226,7 +235,12 @@ def _apply_template(docs_qa: list[tuple[str, str]], tokenizer: Any) -> list[str]
             {"role": "assistant", "content": answer},
         ]
         out.append(
-            tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
+            tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=False,
+                date_string=_PINNED_DATE_STRING,
+            )
         )
     return out
 
