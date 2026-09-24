@@ -222,8 +222,12 @@ def _calibrate_threshold_retain_percentile(
 # apply_chat_template — embedding the wall-clock date of the machine at
 # render time.  That makes the SV-extraction / clustering corpus (and its
 # MiniLM embeddings) silently vary run-to-run depending on what day they
-# were computed, breaking reproducibility.  Pin it.
-_PINNED_DATE_STRING = "26 Jul 2024"
+# were computed, breaking reproducibility.  Pin it.  The gate reads the
+# templated prompt, so this date must be the same at extraction and at eval
+# (benchmarks/tofu.py reads the same variable).  Override per run with the
+# GUARD_TEMPLATE_DATE environment variable (see run_all.sh for the dates used
+# for each model in the paper).
+_PINNED_DATE_STRING = os.environ.get("GUARD_TEMPLATE_DATE", "26 Jul 2024")
 
 
 def _apply_template(docs_qa: list[tuple[str, str]], tokenizer: Any) -> list[str]:

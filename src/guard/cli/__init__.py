@@ -41,7 +41,7 @@ def main() -> None:
     eval_parser = subparsers.add_parser("eval", help="Quick coefficient-sweep perplexity eval.")
     eval_parser.add_argument("sv_path", help="Path to sv.pt")
     eval_parser.add_argument("--model", default="")
-    eval_parser.add_argument("--coeffs", nargs="+", type=float, default=[-0.8, -0.3, -0.15, -0.05, 0.0])
+    eval_parser.add_argument("--coeffs", nargs="+", type=float, default=[0.0, 0.05, 0.15, 0.3, 0.8])
     eval_parser.add_argument("--forget-docs", default=None)
     eval_parser.add_argument("--retain-docs", default=None)
     eval_parser.add_argument("--batch-size", type=int, default=8)

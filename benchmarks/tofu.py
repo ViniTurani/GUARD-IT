@@ -37,9 +37,11 @@ _OPEN_UNL = _HERE / "open-unlearning"  # benchmarks/open-unlearning/
 if _hf_cache := os.environ.get("GUARD_HF_CACHE"):
     os.environ.setdefault("HF_DATASETS_CACHE", _hf_cache)
 
-for _p in [str(_OPEN_UNL / "src")]:
+for _p in [str(_OPEN_UNL / "src"), str(_HERE)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+from mem_metric import summarize as summarize_tofu_eval  # noqa: E402
 
 # ---------------------------------------------------------------------------
 import importlib.util as _ilu
@@ -92,6 +94,9 @@ def _build_eval_cfg(cfg: dict[str, Any], output_base: Path) -> Any:
         f"eval.tofu.forget_split={forget_split}",
         f"eval.tofu.holdout_split={holdout_split}",
         f"eval.tofu.batch_size={batch_size}",
+        # Upstream open-unlearning's eval/tofu.yaml leaves these two commented out;
+        # Mem needs exact_memorization and Gibb needs forget_Q_A_gibberish.
+        "+eval/tofu_metrics=[exact_memorization,forget_Q_A_gibberish]",
         f"eval.tofu.metrics.forget_Q_A_gibberish.device={gibberish_device}",
         f"paths.output_dir={output_base}",
         "task_name=grave_steered",
@@ -119,7 +124,8 @@ def _template_args(cfg: dict[str, Any]) -> Any:
         # render time — makes eval prompts (and thus generations/metrics)
         # silently vary depending on what day the benchmark runs. Pin it to
         # match the SV-extraction side (guard.cli.cluster._PINNED_DATE_STRING).
-        "date_string": "26 Jul 2024",
+        # Override with GUARD_TEMPLATE_DATE (same variable as the extraction side).
+        "date_string": os.environ.get("GUARD_TEMPLATE_DATE", "26 Jul 2024"),
         "system_prompt": "You are a helpful assistant.",
         "system_prompt_with_special_tokens": (
             "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n"
@@ -454,26 +460,11 @@ def main() -> None:
                         if isinstance(_entry, dict) and "agg_value" in _entry:
                             result[_key] = _entry["agg_value"]
 
-                # mem = harmonic_mean(1 - col) for the 4 forgetting components
-                _mem_cols = [
-                    "extraction_strength",
-                    "exact_memorization",
-                    "forget_Q_A_PARA_Prob",
-                    "forget_truth_ratio",
-                ]
-                _mem_vals = [
-                    1.0 - result[c] for c in _mem_cols if c in result and result[c] is not None
-                ]
-                if len(_mem_vals) == len(_mem_cols) and all(v > 0 for v in _mem_vals):
-                    result["mem"] = len(_mem_vals) / sum(1.0 / v for v in _mem_vals)
-                else:
-                    result["mem"] = 0.0
-
-                # overall = harmonic_mean(mem, model_utility)
-                _mu = result.get("model_utility")
-                _mem = result.get("mem")
-                if _mu and _mem:
-                    result["overall"] = 2.0 / (1.0 / _mu + 1.0 / _mem)
+                # Mem / Avg as reported in the paper; see mem_metric.py.
+                if _eval_json.exists():
+                    _s = summarize_tofu_eval(_full)
+                    result["mem"] = _s["Mem"] or 0.0
+                    result["overall"] = _s["Avg"]
                 variant_results[str(coeff)] = result
                 logger.info("  → {}", result)
 

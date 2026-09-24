@@ -24,7 +24,7 @@ dataset:
 clustering:
   n_clusters: auto
   k_min: 2
-  k_max: 20
+  k_max: 10
   embed_model: all-MiniLM-L6-v2
 
 batch_size: 64

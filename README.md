@@ -115,8 +115,10 @@ The benchmarks depend on external repos that must be cloned manually:
 
 ```bash
 # TOFU — clone open-unlearning into benchmarks/open-unlearning/
+# (its Python dependencies are already covered by the `tofu` extra installed above)
 git clone https://github.com/locuslab/open-unlearning.git benchmarks/open-unlearning
-pip install -e "benchmarks/open-unlearning[tofu]"
+git -C benchmarks/open-unlearning checkout c90a7c7144587a29740970c33293a742e1ed7364
+git -C benchmarks/open-unlearning apply ../patches/open-unlearning-bf16-logits.patch
 
 # MUSE — clone muse_bench as a sibling of the guard repo
 git clone https://github.com/swj0419/muse_bench ../muse_bench
@@ -129,7 +131,8 @@ Then run:
 # TOFU
 guard cluster configs/examples/tofu_1b_forget05.yaml
 guard benchmark tofu benchmarks/configs/eval_tofu_forget05.yaml \
-    --sv-dir steering_vectors/.../forget05_Kf*/residual/layer_4
+    --sv-dir steering_vectors/.../forget05_Kf*/residual/layer_4 \
+    --coeffs 0.2
 
 # MUSE
 guard cluster configs/examples/muse_books.yaml
@@ -137,7 +140,19 @@ guard benchmark muse benchmarks/configs/muse_books.yaml \
     --sv-dir steering_vectors/.../muse_books_Kf*/residual/layer_8
 ```
 
-To reproduce all results reported in the paper:
+The eval configs default to Llama-3.2-1B. For the other models, override the model and the layer:
+
+| Model | Layer | Coefficient α | Template date | Overrides |
+|-------|-------|---------------|---------------|-----------|
+| Llama-3.2-1B | 4 | 0.2 | `28 Apr 2026` | (config default) |
+| Llama-3.2-3B | 7 | 0.4 | `28 Apr 2026` | `--override model=open-unlearning/tofu_Llama-3.2-3B-Instruct_full --override layer=7` |
+| Llama-3.1-8B | 8 | 0.5 | `26 Jul 2024` | `--override model=open-unlearning/tofu_Llama-3.1-8B-Instruct_full --override layer=8` |
+
+The Llama chat template writes a "Today Date" line into every prompt, and the gate reads the templated prompt, so the date affects routing. It is pinned (default `26 Jul 2024`) and must be the same for `guard cluster` and `guard benchmark`; set it with `export GUARD_TEMPLATE_DATE="28 Apr 2026"` before both commands. `run_all.sh` does this per model.
+
+The coefficient is **positive**: the hook applies `h' = h − α·v`, so `α > 0` steers away from the forget set and `α = 0` is the unmodified model.
+
+To reproduce the GUARD-IT TOFU results reported in the paper (forget01 and forget05, three models, seeds 0–4):
 
 ```bash
 bash run_all.sh
@@ -159,7 +174,7 @@ gw = GateConfig(enabled=True, routing_source="text", threshold=0.55)
 with SteeredModel.from_cluster_dir(
     model,
     cluster_dir="steering_vectors/.../layer_4/",
-    coeff=-0.3,
+    coeff=0.2,
     gate_cfg=gw,
     tokenizer=tokenizer,
 ) as steered:
@@ -174,7 +189,7 @@ To sweep coefficients without reloading the model:
 
 ```python
 with SteeredModel.from_cluster_dir(..., coeff=0.0, ...) as steered:
-    for coeff in [-0.8, -0.3, -0.15, 0.0]:
+    for coeff in [0.0, 0.1, 0.2, 0.3]:
         steered.coeff = coeff
         outputs = steered.generate(...)
 ```
@@ -189,7 +204,7 @@ Pre-trained steering vectors are not provided. By design, users should compute t
 
 ## Results
 
-Results will be published alongside the paper. Commands to reproduce all reported results are in `run_all.sh`.
+Results will be published alongside the paper. Commands to reproduce the reported TOFU results are in `run_all.sh`; `benchmarks/recompute_mem.py` aggregates the per-seed `TOFU_EVAL.json` files into mean ± SE.
 
 ---
 
@@ -216,7 +231,7 @@ dataset:
 clustering:
   n_clusters: auto                 # auto (silhouette) | int
   k_min: 2
-  k_max: 20
+  k_max: 10
 
 batch_size: 128
 max_length: 512
@@ -252,19 +267,3 @@ This code is released under the MIT License. See [LICENSE](LICENSE) for details.
 Bug reports and questions: please open an issue.
 
 ---
-
-## Citation
-
-If you use GUARD in your research, please cite:
-
-```bibtex
-@misc{turani2026inferencetimemachineunlearninggated,
-      title={Inference-Time Machine Unlearning via Gated Activation Redirection}, 
-      author={Vinícius Conte Turani and Otávio Parraga and João Vitor Boer Abitante and Kristen K. Arguello and Joana Pasquali and Ramiro N. Barros and Flavio du Pin Calmon and Christian Mattjie and Rodrigo C. Barros and Lucas S. Kupssinskü},
-      year={2026},
-      eprint={2605.12765},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2605.12765}, 
-}
-```

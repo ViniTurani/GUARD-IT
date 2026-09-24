@@ -32,6 +32,7 @@ steering_vectors*/
 experiments*/
 
 logs/
+results/
 *.pt
 *.bin
 *.safetensors
@@ -46,7 +47,6 @@ benchmarks/overleaf/
 
 # Ablation / sweep run scripts
 run_ablations.sh
-run_all.sh
 run_method_ablations.sh
 
 # Experiment sweep configs (local only — use configs/examples/ for shareable examples)

@@ -166,9 +166,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--coeffs",
         nargs="+",
         type=float,
-        default=[-0.8, -0.3, -0.2, -0.15, -0.1, -0.05, 0.0],
+        default=[0.0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.8],
         metavar="COEFF",
-        help="Steering coefficients to sweep (default: -0.8 -0.3 -0.2 -0.15 -0.1 -0.05 0.0).",
+        help="Steering coefficients to sweep (default: 0.0 0.05 0.1 0.15 0.2 0.3 0.8). Positive values steer away from the forget set (h - coeff * sv).",
     )
     p.add_argument("--forget-docs", type=Path, help="JSONL file of forget texts (optional).")
     p.add_argument("--retain-docs", type=Path, help="JSONL file of retain texts (optional).")

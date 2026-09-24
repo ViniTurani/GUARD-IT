@@ -1,0 +1,13 @@
+diff --git a/src/evals/metrics/utils.py b/src/evals/metrics/utils.py
+index 71684b7..d9f196a 100644
+--- a/src/evals/metrics/utils.py
++++ b/src/evals/metrics/utils.py
+@@ -84,7 +84,7 @@ def evaluate_probability(model, batch):
+     batch = {k: v.to(model.device) for k, v in batch.items()}
+     with torch.no_grad():
+         output = model(**batch)
+-    logits = output.logits
++    logits = output.logits.float()  # transformers>=4.46 returns bf16 logits; .numpy() below rejects bf16
+     labels = batch["labels"]
+     shifted_labels = labels[..., 1:].contiguous()
+     logits = logits[..., :-1, :].contiguous()
