@@ -252,19 +252,3 @@ This code is released under the MIT License. See [LICENSE](LICENSE) for details.
 Bug reports and questions: please open an issue.
 
 ---
-
-## Citation
-
-If you use GUARD in your research, please cite:
-
-```bibtex
-@misc{turani2026inferencetimemachineunlearninggated,
-      title={Inference-Time Machine Unlearning via Gated Activation Redirection}, 
-      author={Vinícius Conte Turani and Otávio Parraga and João Vitor Boer Abitante and Kristen K. Arguello and Joana Pasquali and Ramiro N. Barros and Flavio du Pin Calmon and Christian Mattjie and Rodrigo C. Barros and Lucas S. Kupssinskü},
-      year={2026},
-      eprint={2605.12765},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2605.12765}, 
-}
-```
